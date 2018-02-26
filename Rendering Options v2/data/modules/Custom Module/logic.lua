@@ -296,7 +296,14 @@ function loading_preset_at_start(pr_num)
 		set(bloom_far_ref,get(ro_refs_values,91))
 	end
 end
-
+function onPlaneUnloaded()
+	timevarlogic=10
+end
+function onPlaneLoaded()
+	if timevarlogic==10 then
+		timevarlogic=11
+	end
+end
 function update()
 	if get(need_reload,2)==1 then
 		assign_values()
@@ -316,10 +323,15 @@ function update()
 		readrefslogic()
 		assign_values()
 		load_at_start=1
-	elseif timevarlogic>5 then					------LOADING TIMER
+	elseif timevarlogic>5 and timevarlogic<7 then					------LOADING TIMER
 		sasl.stopTimer(StartTimerIDLogic)
 		sasl.deleteTimer(StartTimerIDLogic)
 		StartTimerIDLogic=0
+		timevarlogic=0
+	elseif timevarlogic==11 and get(ro_sett,2)>0 then
+		readrefslogic()
+		assign_values()
+		loading_preset_at_start(get(ro_sett,2))
 		timevarlogic=0
 	end
 	if StartTimerIDLogic==0 then
