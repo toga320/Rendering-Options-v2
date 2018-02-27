@@ -288,9 +288,9 @@ function draw()
 		elseif get(selected_tab)==3 then
 			sasl.gl.drawRectangle ( 17 , 310 , 235 , 5 , {0.12,0.45,0.75,get(ro_sett,9)} )
 			sasl.gl.drawText ( MainFont , 270 , 400 , langfile_sett[36]..":  ", 18 , false , false , TEXT_ALIGN_LEFT , {1 , 1 , 1 , get(ro_sett,9) } )
-			sasl.gl.drawText ( MainFont , 620 , 400 , get(csm_split_exterior).." (min 0, max 3)" , 18 , false , false , TEXT_ALIGN_LEFT , {1 , 1 , 1 , get(ro_sett,9) } )
+			sasl.gl.drawText ( MainFont , 620 , 400 , get(csm_split_exterior).." (min 0, max 4)" , 18 , false , false , TEXT_ALIGN_LEFT , {1 , 1 , 1 , get(ro_sett,9) } )
 			sasl.gl.drawText ( MainFont , 270 , 370 , langfile_sett[37]..":  ", 18 , false , false , TEXT_ALIGN_LEFT , {1 , 1 , 1 , get(ro_sett,9) } )
-			sasl.gl.drawText ( MainFont , 620 , 370 , get(csm_split_interior).." (min 0, max 3)" , 18 , false , false , TEXT_ALIGN_LEFT , {1 , 1 , 1 , get(ro_sett,9) } )
+			sasl.gl.drawText ( MainFont , 620 , 370 , get(csm_split_interior).." (min 0, max 4)" , 18 , false , false , TEXT_ALIGN_LEFT , {1 , 1 , 1 , get(ro_sett,9) } )
 			sasl.gl.drawText ( MainFont , 270 , 340 , langfile_sett[38]..":  " , 18 , false , false , TEXT_ALIGN_LEFT , {1 , 1 , 1 , get(ro_sett,9) } )
 			sasl.gl.drawText ( MainFont , 620 , 340 , get(shadow_cam_size), 18 , false , false , TEXT_ALIGN_LEFT , {1 , 1 , 1 , get(ro_sett,9) } )
 			sasl.gl.drawText ( MainFont , 270 , 310 , langfile_sett[39]..":  ", 18 , false , false , TEXT_ALIGN_LEFT , {1 , 1 , 1 , get(ro_sett,9) } )
@@ -301,21 +301,23 @@ function draw()
 			sasl.gl.drawText ( MainFont , 620 , 250 , round(get(cockpit_near_proxy),1).." (min 0, max 5)" , 18 , false , false , TEXT_ALIGN_LEFT , {1 , 1 , 1 , get(ro_sett,9) } )
 			sasl.gl.drawText ( MainFont , 270 , 220 , langfile_sett[42]..":  ", 18 , false , false , TEXT_ALIGN_LEFT , {1 , 1 , 1 , get(ro_sett,9) } )
 			sasl.gl.drawText ( MainFont , 620 , 220 , get(far_limit), 18 , false , false , TEXT_ALIGN_LEFT , {1 , 1 , 1 , get(ro_sett,9) } )
-			sasl.gl.drawText ( MainFont , 320 , 175 , langfile_sett[43], 18 , false , false , TEXT_ALIGN_LEFT , {1 , 1 , 1 , get(ro_sett,9) } )
-			sasl.gl.drawText ( MainFont , 320 , 145 , langfile_sett[44], 18 , false , false , TEXT_ALIGN_LEFT , {1 , 1 , 1 , get(ro_sett,9) } )
+			sasl.gl.drawText ( MainFont , 270 , 190 , langfile_sett[129]..":  ", 18 , false , false , TEXT_ALIGN_LEFT , {1 , 1 , 1 , get(ro_sett,9) } )
+			sasl.gl.drawText ( MainFont , 620 , 190 , round(get(last_3d_pass),2), 18 , false , false , TEXT_ALIGN_LEFT , {1 , 1 , 1 , get(ro_sett,9) } )
+			sasl.gl.drawText ( MainFont , 320 , 145 , langfile_sett[43], 18 , false , false , TEXT_ALIGN_LEFT , {1 , 1 , 1 , get(ro_sett,9) } )
+			sasl.gl.drawText ( MainFont , 320 , 115 , langfile_sett[44], 18 , false , false , TEXT_ALIGN_LEFT , {1 , 1 , 1 , get(ro_sett,9) } )
 			if scrollwheel>0 then
 				sasl.gl.drawTexturePart(get(mousepointer) , sasl.getCSMouseXPos()-15 , sasl.getCSMouseYPos() , 45 , 45, 0, 384 ,64,64,{1,1,0 , get(ro_sett,9) })
 			end
-			sasl.gl.drawWideLine ( 265 , 205 , 787 , 205 , 2 , {0.8 , 0.8 , 0.8 , get(ro_sett,9) } )
+			sasl.gl.drawWideLine ( 265 , 175 , 787 , 175 , 2 , {0.8 , 0.8 , 0.8 , get(ro_sett,9) } )
 			if get(scenery_shadows)==0 then
-				sasl.gl.drawTexture(get(off_pic) , 270 , 172 , 40 , 20, {1 , 1 , 1 , get(ro_sett,9)})
-			else
-				sasl.gl.drawTexture(get(on_pic) , 270 , 172 , 40 , 20, {1 , 1 , 1 , get(ro_sett,9) })
-			end
-			if get(disable_shadow_prep)==0 then
-				sasl.gl.drawTexture(get(off_pic) , 270 , 142 , 40 , 20, {1 , 1 , 1 , get(ro_sett,9) })
+				sasl.gl.drawTexture(get(off_pic) , 270 , 142 , 40 , 20, {1 , 1 , 1 , get(ro_sett,9)})
 			else
 				sasl.gl.drawTexture(get(on_pic) , 270 , 142 , 40 , 20, {1 , 1 , 1 , get(ro_sett,9) })
+			end
+			if get(disable_shadow_prep)==0 then
+				sasl.gl.drawTexture(get(off_pic) , 270 , 112 , 40 , 20, {1 , 1 , 1 , get(ro_sett,9) })
+			else
+				sasl.gl.drawTexture(get(on_pic) , 270 , 112 , 40 , 20, {1 , 1 , 1 , get(ro_sett,9) })
 			end
 		elseif get(selected_tab)==4 then
 			sasl.gl.drawRectangle ( 17 , 270 , 235 , 5 , {0.12,0.45,0.75,get(ro_sett,9)} )
@@ -725,7 +727,7 @@ function savepreset(pr_num)
 	val_to_save[30]="Shadow cam size="..get(shadow_cam_size)
 	val_to_save[31]="Shadow size="..get(shadow_size)
 	val_to_save[32]="Disable shadows="..get(disable_shadow_prep)
-	val_to_save[33]="Last 3D pass="..get(last_3d_pass)
+	val_to_save[33]="Last 3D pass="..round(get(last_3d_pass),2)
 	val_to_save[34]="Draw objects (0-6)="..get(draw_objs_06_ref)
 	val_to_save[35]="Draw cars (0-5)="..get(draw_cars_05_ref)
 	val_to_save[36]="Draw vecs (0-3)="..get(draw_vecs_03_ref)
@@ -950,7 +952,7 @@ function onMouseMove(component, x, y, button, parentX, parentY)
 			scrollwheel=0
 		end
 	elseif get(selected_tab)==3 then
-		if x>610 and x<787 and y>205 and y<420 then
+		if x>610 and x<787 and y>175 and y<420 then
 			scrollwheel=1
 		else
 			scrollwheel=0
@@ -1156,16 +1158,16 @@ function onMouseWheel ( component , x , y , button , parentX , parentY, value )
 			if get(csm_split_exterior)<0 then
 					set(csm_split_exterior,0)
 			elseif get(csm_split_exterior)==0 then set(csm_split_exterior,0)
-			elseif get(csm_split_exterior)>3 then
-					set(csm_split_exterior,3)
+			elseif get(csm_split_exterior)>4 then
+					set(csm_split_exterior,4)
 			end
 		elseif x>610 and x<787 and y>361 and y<390 then
 			set(csm_split_interior,get(csm_split_interior)+value)
 			if get(csm_split_interior)<0 then
 					set(csm_split_interior,0)
 			elseif get(csm_split_interior)==0 then set(csm_split_interior,0)
-			elseif get(csm_split_interior)>3 then
-					set(csm_split_interior,3)
+			elseif get(csm_split_interior)>4 then
+					set(csm_split_interior,4)
 			end
 		elseif x>610 and x<787 and y>331 and y<360 then
 			set(shadow_cam_size,get(shadow_cam_size)+value*512)
@@ -1204,6 +1206,14 @@ function onMouseWheel ( component , x , y , button , parentX , parentY, value )
 			elseif get(far_limit)==0 then set(far_limit,0)
 			elseif get(far_limit)>100000 then
 					set(far_limit,100000)
+			end
+		elseif x>610 and x<787 and y>180 and y<210 then
+			set(last_3d_pass,get(last_3d_pass)+value*0.1)
+			if get(last_3d_pass)<0 then
+					set(last_3d_pass,0)
+			elseif get(last_3d_pass)==0 then set(last_3d_pass,0)
+			elseif get(last_3d_pass)>100 then
+					set(last_3d_pass,100)
 			end
 		end
 		       
@@ -1779,9 +1789,9 @@ function onMouseDown ( component , x , y , button , parentX , parentY )
 				if get(draw_fft_water)==0 then set(draw_fft_water,1) else set(draw_fft_water,0) end
 			end
 		elseif get(selected_tab)==3 then
-			if x>270 and x<310 and y>170 and y<195 then
+			if x>270 and x<310 and y>140 and y<165 then
 				if get(scenery_shadows)==0 then set(scenery_shadows,1) else set(scenery_shadows,0) end
-			elseif x>270 and x<310 and y>144 and y<165 then
+			elseif x>270 and x<310 and y>114 and y<135 then
 				if get(disable_shadow_prep)==0 then set(disable_shadow_prep,1) else set(disable_shadow_prep,0) end
 			end
 		elseif get(selected_tab)==4 then

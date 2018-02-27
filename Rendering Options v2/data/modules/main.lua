@@ -62,13 +62,15 @@ function load_params()
 			set(composite_far_dist_bias_ref,get(ro_refs_values,82))
 			if get(need_reload,3)==0 then
 				set(need_reload,1,3)
-				--sasl.commandOnce(reload_scenery)
 				sasl.reloadScenery()
+				
 			end
 		end
 		set(need_reload,1,3)
 	end
+	 
 end
+
 load_settings()
 
 function onSceneryLoaded()
@@ -91,7 +93,6 @@ comp_texes_ref=globalPropertyi("sim/private/controls/reno/comp_texes")				--to a
 tile_lod_bias_ref=globalPropertyf("sim/private/controls/ag/tile_lod_bias")
 composite_far_dist_bias_ref=globalPropertyf("sim/private/controls/terrain/composite_far_dist_bias") 
 load_params()
-
 
 end
 

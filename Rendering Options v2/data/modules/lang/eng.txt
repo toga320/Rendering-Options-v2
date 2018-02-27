@@ -126,3 +126,4 @@ WaterFix
 Slider height
 Show slider
 AutoLod Show FPS
+Last 3D Pass

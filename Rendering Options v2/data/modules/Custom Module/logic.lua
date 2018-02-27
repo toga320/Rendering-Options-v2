@@ -14,7 +14,7 @@ clouds_top_2=globalPropertyf("sim/weather/cloud_tops_msl_m[2]")
 clouds_type_0=globalPropertyi("sim/weather/cloud_type[0]")
 clouds_type_1=globalPropertyi("sim/weather/cloud_type[1]")
 clouds_type_2=globalPropertyi("sim/weather/cloud_type[2]")
-
+reload_aircraft = sasl.findCommand("sim/operation/reload_aircraft")
 id_env = sasl.findPluginBySignature("css.aero.xenviro")
 id_env2 = sasl.findPluginBySignature("dark.space.xenviro")
 if id_env~=-1 then
@@ -24,7 +24,7 @@ elseif id_env2~=-1 then
 else
 	env_active=0
 end
-
+local apply_pushed=false
 
 
 ro_refs_values=globalPropertyfa ( "pnv/ro/ro_refs_values", false )
@@ -297,11 +297,16 @@ function loading_preset_at_start(pr_num)
 	end
 end
 function onPlaneUnloaded()
-	timevarlogic=10
+	if apply_pushed==false then
+		timevarlogic=10
+	end
 end
 function onPlaneLoaded()
 	if timevarlogic==10 then
 		timevarlogic=11
+	end
+	if apply_pushed then
+		apply_pushed=false
 	end
 end
 function update()
@@ -310,6 +315,9 @@ function update()
 		set(need_reload,0,2)
 		set(need_reload,0,1)
 		sasl.commandOnce(reload_scenery)
+		apply_pushed=true
+		sasl.commandOnce(reload_aircraft)
+		
 	end	
 	if StartTimerIDLogic ~= 0 then
 		timevarlogic = sasl.getElapsedSeconds(StartTimerIDLogic)
@@ -319,6 +327,10 @@ function update()
 		assign_values()
 		loading_preset_at_start(get(ro_sett,2))
 		load_at_start=1
+		if get(ro_sett,2)>0 and get(need_reload,3)==1 then
+			set(need_reload,2,3)
+			sasl.commandOnce(reload_aircraft)
+		end
 	elseif timevarlogic>3 and load_at_start==0 and get(ro_sett,2)==0 then
 		readrefslogic()
 		assign_values()
