@@ -2,6 +2,9 @@ window_height= globalPropertyi("sim/graphics/view/window_height")
 window_width= globalPropertyi("sim/graphics/view/window_width")
 wheight=get(window_height)
 wwidth=get(window_width)
+stages=0
+timevarlogic=0
+timevarlogiconreload=0
 ro_sett=globalPropertyfa ( "pnv/ro/ro_sett", false )
 wave_length=globalPropertyf("sim/weather/wave_length")
 altitude=globalPropertyf(	"sim/flightmodel/position/elevation")
@@ -15,8 +18,15 @@ clouds_type_0=globalPropertyi("sim/weather/cloud_type[0]")
 clouds_type_1=globalPropertyi("sim/weather/cloud_type[1]")
 clouds_type_2=globalPropertyi("sim/weather/cloud_type[2]")
 reload_aircraft = sasl.findCommand("sim/operation/reload_aircraft")
+prev_livery = sasl.findCommand("sim/operation/prev_livery")
+next_livery = sasl.findCommand("sim/operation/next_livery")
+
+startup_running= globalPropertyi("sim/operation/prefs/startup_running")
+
 id_env = sasl.findPluginBySignature("css.aero.xenviro")
 id_env2 = sasl.findPluginBySignature("dark.space.xenviro")
+version = sasl.getXPVersion()
+--print(version)
 if id_env~=-1 then
 	env_active= globalPropertyi("env/active", true)
 elseif id_env2~=-1 then
@@ -28,6 +38,7 @@ local apply_pushed=false
 
 
 ro_refs_values=globalPropertyfa ( "pnv/ro/ro_refs_values", false )
+temp_ro_ref_values={}
 LOD_xp_paused= globalPropertyi("sim/time/paused")
 LOD_xp_framerate=globalPropertyf("sim/operation/misc/frame_rate_period")   -- 1/frame_rate_period = FPS
 need_reload=globalPropertyia ( "pnv/ro/need_reload", false )
@@ -36,6 +47,7 @@ StartTimerIDLogic = sasl.createTimer ()
 sasl.startTimer(StartTimerIDLogic)
 local ii=1
 local load_at_start=0
+local steps_logic=0
 reload_true_false={}
 temp_data_to_reload={}
 function readrefslogic()
@@ -296,11 +308,200 @@ function loading_preset_at_start(pr_num)
 		set(bloom_far_ref,get(ro_refs_values,91))
 	end
 end
+function read_refs_on_apply()
+	temp_ro_ref_values[1]=get(draw_deer_birds_ref)
+	temp_ro_ref_values[2]=get(draw_fire_ball_ref)
+	temp_ro_ref_values[3]=get(draw_boats_ref)
+	temp_ro_ref_values[4]=get(draw_aurora_ref)
+	temp_ro_ref_values[5]=get(draw_scattering_ref)
+	temp_ro_ref_values[6]=get(draw_volume_fog01_ref)
+	temp_ro_ref_values[7]=get(draw_per_pix_liting_ref)
+	temp_ro_ref_values[8]=get(draw_objs_06_ref)
+	temp_ro_ref_values[9]=get(draw_vecs_03_ref)
+	temp_ro_ref_values[10]=get(draw_for_05_ref)
+	temp_ro_ref_values[11]=get(inn_ring_density_ref)
+	temp_ro_ref_values[12]=get(mid_ring_density_ref)
+	temp_ro_ref_values[13]=get(out_ring_density_ref)
+	temp_ro_ref_values[14]=get(draw_detail_apt_03_ref)
+	temp_ro_ref_values[15]=get(comp_texes_ref)
+	temp_ro_ref_values[16]=get(extended_dsfs_ref)
+	temp_ro_ref_values[17]=get(tile_lod_bias_ref)
+	temp_ro_ref_values[18]=get(composite_far_dist_bias_ref)
+	temp_ro_ref_values[19]=get(static_plane_build_vis)
+	temp_ro_ref_values[20]=get(static_plane_density)
+	temp_ro_ref_values[21]=get(use_reflective_water)
+	temp_ro_ref_values[22]=get(draw_fft_water)
+	temp_ro_ref_values[23]=get(draw_reflect_water05)
+	temp_ro_ref_values[24]=get(fft_amp1_ref)
+	temp_ro_ref_values[25]=get(fft_amp2_ref)
+	temp_ro_ref_values[26]=get(fft_amp3_ref)
+	temp_ro_ref_values[27]=get(fft_amp4_ref)
+	temp_ro_ref_values[28]=get(fft_scale1_ref)
+	temp_ro_ref_values[29]=get(fft_scale2_ref)
+	temp_ro_ref_values[30]=get(fft_scale3_ref)
+	temp_ro_ref_values[31]=get(fft_scale4_ref)
+	temp_ro_ref_values[32]=get(noise_speed_ref)
+	temp_ro_ref_values[33]=get(noise_bias_gen_x_ref)
+	temp_ro_ref_values[34]=get(noise_bias_gen_y_ref)
+	temp_ro_ref_values[35]=get(csm_split_exterior)
+	temp_ro_ref_values[36]=get(csm_split_interior)
+	temp_ro_ref_values[37]=get(far_limit)
+	temp_ro_ref_values[38]=get(scenery_shadows)
+	temp_ro_ref_values[39]=get(cockpit_near_adjust)
+	temp_ro_ref_values[40]=get(cockpit_near_proxy)
+	temp_ro_ref_values[41]=get(shadow_cam_size)
+	temp_ro_ref_values[42]=get(shadow_size)
+	temp_ro_ref_values[43]=get(disable_shadow_prep)
+	temp_ro_ref_values[44]=get(last_3d_pass)
+	temp_ro_ref_values[45]=get(draw_cars_05_ref)
+	temp_ro_ref_values[46]=get(draw_HDR_ref)
+	temp_ro_ref_values[47]=get(use_bump_maps_ref)
+	temp_ro_ref_values[48]=get(use_detail_textures_ref)
+	temp_ro_ref_values[49]=get(ssao_enable_ref)
+	temp_ro_ref_values[50]=get(first_res_3d_ref)
+	temp_ro_ref_values[51]=get(last_res_3d_ref)
+	temp_ro_ref_values[52]=get(cloud_shadow_lighten_ratio_ref)
+	temp_ro_ref_values[53]=get(plot_radius_ref)
+	temp_ro_ref_values[54]=get(overdraw_control_ref)
+	temp_ro_ref_values[55]=get(ambient_gain_ref)
+	temp_ro_ref_values[56]=get(diffuse_gain_ref)
+	temp_ro_ref_values[57]=get(white_point_ref)
+	temp_ro_ref_values[58]=get(atmo_scale_raleigh_ref)
+	temp_ro_ref_values[59]=get(inscatter_gain_raleigh_ref)
+	temp_ro_ref_values[60]=get(min_shadow_angle_ref)
+	temp_ro_ref_values[61]=get(max_shadow_angle_ref)
+	temp_ro_ref_values[62]=get(max_dsf_vis_ever_ref)
+	temp_ro_ref_values[63]=get(dsf_fade_ratio_ref)
+	temp_ro_ref_values[64]=get(dsf_cutover_scale_ref)
+	temp_ro_ref_values[65]=get(min_tone_angle_ref)
+	temp_ro_ref_values[66]=get(max_tone_angle_ref)
+	temp_ro_ref_values[67]=get(tone_ratio_clean_ref)
+	temp_ro_ref_values[68]=get(tone_ratio_foggy_ref)
+	temp_ro_ref_values[69]=get(tone_ratio_hazy_ref)
+	temp_ro_ref_values[70]=get(tone_ratio_snowy_ref)
+	temp_ro_ref_values[71]=get(tone_ratio_ocast_ref)
+	temp_ro_ref_values[72]=get(tone_ratio_strat_ref)
+	temp_ro_ref_values[73]=get(tone_ratio_hialt_ref)
+	temp_ro_ref_values[74]=get(inscatter_gain_mie)
+	temp_ro_ref_values[75]=get(scatter_raleigh_r)
+	temp_ro_ref_values[76]=get(scatter_raleigh_g)
+	temp_ro_ref_values[77]=get(scatter_raleigh_b)
+	temp_ro_ref_values[78]=get(sky_gain)
+	temp_ro_ref_values[79]=get(visibility_reported_m_ref)
+	temp_ro_ref_values[80]=get(LOD_bias_rat_ref)
+	temp_ro_ref_values[81]=get(cars_lod_min_ref)
+	temp_ro_ref_values[82]=get(fade_start_rat_ref)
+	temp_ro_ref_values[83]=get(fog_be_gone_ref)
+	temp_ro_ref_values[84]=get(scale_near_ref)
+	temp_ro_ref_values[85]=get(scale_far_ref)
+	temp_ro_ref_values[86]=get(dist_near_ref)
+	temp_ro_ref_values[87]=get(dist_far_ref)
+	temp_ro_ref_values[88]=get(exponent_near_ref)
+	temp_ro_ref_values[89]=get(exponent_far_ref)
+	temp_ro_ref_values[90]=get(bloom_near_ref)
+	temp_ro_ref_values[91]=get(bloom_far_ref)
+
+end
+function set_refs_on_apply()
+	set(draw_deer_birds_ref,	temp_ro_ref_values[1])
+	set(draw_fire_ball_ref,	temp_ro_ref_values[2])
+	set(draw_boats_ref,	temp_ro_ref_values[3])
+	set(draw_aurora_ref,	temp_ro_ref_values[4])
+	set(draw_scattering_ref,	temp_ro_ref_values[5])
+	set(draw_volume_fog01_ref,	temp_ro_ref_values[6])
+	set(draw_per_pix_liting_ref,	temp_ro_ref_values[7])
+	set(draw_objs_06_ref,	temp_ro_ref_values[8])
+	set(draw_vecs_03_ref,	temp_ro_ref_values[9])
+	set(draw_for_05_ref,	temp_ro_ref_values[10])
+	set(inn_ring_density_ref,	temp_ro_ref_values[11])
+	set(mid_ring_density_ref,	temp_ro_ref_values[12])
+	set(out_ring_density_ref,	temp_ro_ref_values[13])
+	set(draw_detail_apt_03_ref,	temp_ro_ref_values[14])
+	set(comp_texes_ref,	temp_ro_ref_values[15])
+	set(extended_dsfs_ref,	temp_ro_ref_values[16])
+	set(tile_lod_bias_ref,	temp_ro_ref_values[17])
+	set(composite_far_dist_bias_ref,	temp_ro_ref_values[18])
+	set(static_plane_build_vis,	temp_ro_ref_values[19])
+	set(static_plane_density,	temp_ro_ref_values[20])
+	set(use_reflective_water,	temp_ro_ref_values[21])
+	set(draw_fft_water,	temp_ro_ref_values[22])
+	set(draw_reflect_water05,	temp_ro_ref_values[23])
+	set(fft_amp1_ref,	temp_ro_ref_values[24])
+	set(fft_amp2_ref,	temp_ro_ref_values[25])
+	set(fft_amp3_ref,	temp_ro_ref_values[26])
+	set(fft_amp4_ref,	temp_ro_ref_values[27])
+	set(fft_scale1_ref,	temp_ro_ref_values[28])
+	set(fft_scale2_ref,	temp_ro_ref_values[29])
+	set(fft_scale3_ref,	temp_ro_ref_values[30])
+	set(fft_scale4_ref,	temp_ro_ref_values[31])
+	set(noise_speed_ref,	temp_ro_ref_values[32])
+	set(noise_bias_gen_x_ref,	temp_ro_ref_values[33])
+	set(noise_bias_gen_y_ref,	temp_ro_ref_values[34])
+	set(csm_split_exterior,	temp_ro_ref_values[35])
+	set(csm_split_interior,	temp_ro_ref_values[36])
+	set(far_limit,	temp_ro_ref_values[37])
+	set(scenery_shadows,	temp_ro_ref_values[38])
+	set(cockpit_near_adjust,	temp_ro_ref_values[39])
+	set(cockpit_near_proxy,	temp_ro_ref_values[40])
+	set(shadow_cam_size,	temp_ro_ref_values[41])
+	set(shadow_size,	temp_ro_ref_values[42])
+	set(disable_shadow_prep,	temp_ro_ref_values[43])
+	set(last_3d_pass,	temp_ro_ref_values[44])
+	set(draw_cars_05_ref,	temp_ro_ref_values[45])
+	set(draw_HDR_ref,	temp_ro_ref_values[46])
+	set(use_bump_maps_ref,	temp_ro_ref_values[47])
+	set(use_detail_textures_ref,	temp_ro_ref_values[48])
+	set(ssao_enable_ref,	temp_ro_ref_values[49])
+	set(first_res_3d_ref,	temp_ro_ref_values[50])
+	set(last_res_3d_ref,	temp_ro_ref_values[51])
+	set(cloud_shadow_lighten_ratio_ref,	temp_ro_ref_values[52])
+	set(plot_radius_ref,	temp_ro_ref_values[53])
+	set(overdraw_control_ref,	temp_ro_ref_values[54])
+	set(ambient_gain_ref,	temp_ro_ref_values[55])
+	set(diffuse_gain_ref,	temp_ro_ref_values[56])
+	set(white_point_ref,	temp_ro_ref_values[57])
+	set(atmo_scale_raleigh_ref,	temp_ro_ref_values[58])
+	set(inscatter_gain_raleigh_ref,	temp_ro_ref_values[59])
+	set(min_shadow_angle_ref,	temp_ro_ref_values[60])
+	set(max_shadow_angle_ref,	temp_ro_ref_values[61])
+	set(max_dsf_vis_ever_ref,	temp_ro_ref_values[62])
+	set(dsf_fade_ratio_ref,	temp_ro_ref_values[63])
+	set(dsf_cutover_scale_ref,	temp_ro_ref_values[64])
+	set(min_tone_angle_ref,	temp_ro_ref_values[65])
+	set(max_tone_angle_ref,	temp_ro_ref_values[66])
+	set(tone_ratio_clean_ref,	temp_ro_ref_values[67])
+	set(tone_ratio_foggy_ref,	temp_ro_ref_values[68])
+	set(tone_ratio_hazy_ref,	temp_ro_ref_values[69])
+	set(tone_ratio_snowy_ref,	temp_ro_ref_values[70])
+	set(tone_ratio_ocast_ref,	temp_ro_ref_values[71])
+	set(tone_ratio_strat_ref,	temp_ro_ref_values[72])
+	set(tone_ratio_hialt_ref,	temp_ro_ref_values[73])
+	set(inscatter_gain_mie,	temp_ro_ref_values[74])
+	set(scatter_raleigh_r,	temp_ro_ref_values[75])
+	set(scatter_raleigh_g,	temp_ro_ref_values[76])
+	set(scatter_raleigh_b,	temp_ro_ref_values[77])
+	set(sky_gain,	temp_ro_ref_values[78])
+	set(visibility_reported_m_ref,	temp_ro_ref_values[79])
+	set(LOD_bias_rat_ref,	temp_ro_ref_values[80])
+	set(cars_lod_min_ref,	temp_ro_ref_values[81])
+	set(fade_start_rat_ref,	temp_ro_ref_values[82])
+	set(fog_be_gone_ref,	temp_ro_ref_values[83])
+	set(scale_near_ref,	temp_ro_ref_values[84])
+	set(scale_far_ref,	temp_ro_ref_values[85])
+	set(dist_near_ref,	temp_ro_ref_values[86])
+	set(dist_far_ref,	temp_ro_ref_values[87])
+	set(exponent_near_ref,	temp_ro_ref_values[88])
+	set(exponent_far_ref,	temp_ro_ref_values[89])
+	set(bloom_near_ref,	temp_ro_ref_values[90])
+	set(bloom_far_ref,	temp_ro_ref_values[91])
+
+end
 function onPlaneUnloaded()
-	if apply_pushed==false then
+	if apply_pushed==false and load_at_start==1 then
 		timevarlogic=10
 	end
 end
+
 function onPlaneLoaded()
 	if timevarlogic==10 then
 		timevarlogic=11
@@ -308,45 +509,123 @@ function onPlaneLoaded()
 	if apply_pushed then
 		apply_pushed=false
 	end
+	
 end
+function onAirportLoaded()
+	
+end
+function onSceneryLoaded()
+	
+	if apply_pushed==true then
+		if version>11110 then
+			sasl.commandOnce(reload_aircraft)
+			set_refs_on_apply()
+		else
+			set_refs_on_apply()
+		end
+		timevarlogiconreload=5
+		set(ro_sett,10,20) -- show pic
+	end
+end
+
 function update()
+	if timevarlogiconreload>0 then
+		timevarlogiconreload=timevarlogiconreload-0.02
+		
+	end
+	if timevarlogiconreload>4 and get(ro_sett,19)==0 then
+		print("1")
+		sasl.commandOnce(next_livery)
+		set(ro_sett,1,19)
+	elseif timevarlogiconreload>2 and timevarlogiconreload<3 and get(ro_sett,19)==1 then
+		print("2")
+		sasl.commandOnce(prev_livery)	
+		apply_pushed=false
+		set(ro_sett,3,19)
+	elseif timevarlogiconreload>0 and timevarlogiconreload<0.2 and get(ro_sett,19)==3 then
+		set(ro_sett,2,19)
+		
+	end
+	
 	if get(need_reload,2)==1 then
 		assign_values()
 		set(need_reload,0,2)
 		set(need_reload,0,1)
-		sasl.commandOnce(reload_scenery)
 		apply_pushed=true
-		sasl.commandOnce(reload_aircraft)
+		read_refs_on_apply()
+		sasl.commandOnce(reload_scenery)
+		
 		
 	end	
 	if StartTimerIDLogic ~= 0 then
 		timevarlogic = sasl.getElapsedSeconds(StartTimerIDLogic)
 	end
-	if timevarlogic>3 and load_at_start==0 and get(ro_sett,2)>0 then
-		readrefslogic()
-		assign_values()
-		loading_preset_at_start(get(ro_sett,2))
-		load_at_start=1
-		if get(ro_sett,2)>0 and get(need_reload,3)==1 then
-			set(need_reload,2,3)
-			sasl.commandOnce(reload_aircraft)
+	-------------------------логика - если старт сима - сначала перезагруз самолета, а потом загруз рефов
+	
+	if load_at_start==0 then
+		if timevarlogic>3 and get(ro_sett,19)==0 and get(ro_sett,2)>0 then
+			if get(need_reload,3)==1 then
+				
+				if version>11110 then
+					sasl.commandOnce(reload_aircraft)
+					set(need_reload,2,3)
+				else
+					print("3")
+					sasl.commandOnce(next_livery)
+					--sasl.commandOnce(prev_livery)	
+				end
+			end
+			readrefslogic()
+			assign_values()
+			loading_preset_at_start(get(ro_sett,2))
+			set(ro_sett,1,19)
+		elseif timevarlogic>3 and get(ro_sett,19)==0 and get(ro_sett,2)==0 then
+			readrefslogic()
+			assign_values()
+			set(ro_sett,1,19)
+			
+		elseif timevarlogic>5 and get(ro_sett,19)==1 and timevarlogic<7 then					------LOADING TIMER
+			if get(need_reload,3)==1 then
+				if version>11110 then
+				else
+					print("8")
+					sasl.commandOnce(prev_livery)
+				end
+			end
+			sasl.stopTimer(StartTimerIDLogic)
+			sasl.deleteTimer(StartTimerIDLogic)
+			StartTimerIDLogic=0
+			timevarlogic=0
+			load_at_start=1
+			set(ro_sett,0,19)
 		end
-	elseif timevarlogic>3 and load_at_start==0 and get(ro_sett,2)==0 then
-		readrefslogic()
-		assign_values()
-		load_at_start=1
-	elseif timevarlogic>5 and timevarlogic<7 then					------LOADING TIMER
-		sasl.stopTimer(StartTimerIDLogic)
-		sasl.deleteTimer(StartTimerIDLogic)
-		StartTimerIDLogic=0
-		timevarlogic=0
-	elseif timevarlogic==11 and get(ro_sett,2)>0 then
-		readrefslogic()
-		assign_values()
-		loading_preset_at_start(get(ro_sett,2))
-		timevarlogic=0
+	else
+		if timevarlogic==11 and get(ro_sett,2)>0 then
+			readrefslogic()
+			assign_values()
+			loading_preset_at_start(get(ro_sett,2))
+			if version>11110 then
+			else
+				print("6")
+				sasl.commandOnce(next_livery)
+			end
+			timevarlogic=12
+		elseif timevarlogic>14 then
+			if version>11110 then
+			else
+				print("7")
+				sasl.commandOnce(prev_livery)
+			end
+			timevarlogic=0
+		end
+		if timevarlogic>=12 then
+			timevarlogic=timevarlogic+0.05
+		end
 	end
+	
+	
 	if StartTimerIDLogic==0 then
+	--print(get(startup_running))
 		need_reload_func()
 		if get(ro_sett,3) == 1 and get(LOD_xp_paused) == 0 then                                              -- do it only when in "auto"-mode
 			if os.clock() > LOD_akt_time + (get(ro_sett,8)/1000) then                  -- check if wait-time is over

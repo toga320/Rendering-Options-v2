@@ -6,15 +6,17 @@ popupmain = sasl.createCommand ( "pnv/ro/popup" , "Popup main window" )
 local coeff=1
 local ii=1
 selected_tab = createGlobalPropertyi("pnv/ro/selected_tab",1,false,false)
-ro_sett=createGlobalPropertyfa ( "pnv/ro/ro_sett", {0,1,0,0,1,30,40,500,1,0,50,1,0,0,0,0,0,0,0,0} , false , false )----настройки 1-xEnviro enabled(0,1) , 2-load preset(0-6) , 3-autolod(0,1)
+ro_sett=createGlobalPropertyfa ( "pnv/ro/ro_sett", {0,1,0,0,1,30,40,500,1,0,50,1,0,0,0,0,0,0,0,20} , false , false )----настройки 1-xEnviro enabled(0,1) , 2-load preset(0-6) , 3-autolod(0,1)
 																							----4-gray horizon(0,1) , 5-language(1-x), 6-autolod min fps, 7-autolod max fps
-																							----8-autolod timeout, 9-plugin visibility, 10-waterfix, 11-slider height(%), 12-slider visibility, 13-autolod fps show
-																							---
+																							----8-autolod timeout, 9-plugin visibility, 10-waterfix, 11-slider height(%), 12-slider visibility, 13-autolod fps show, 
+																							--14 disable clouds
+																							---19 stage onload;20 load logic for showing pic
 ro_refs_values=createGlobalPropertyfa ( "pnv/ro/ro_refs_values", 150 , false , false )
 need_reload=createGlobalPropertyia ( "pnv/ro/need_reload", {0,0,0} , false , false )  ---- 1-button on-off; 2-reload_func; 3-trigger to reload once at start
 reload_scenery = sasl.findCommand("sim/operation/reload_scenery")
+reload_aircraft = sasl.findCommand("sim/operation/reload_aircraft")
 MainFont = sasl.gl.loadFont ( "fonts/DejaVuSans.ttf" )
-
+version = sasl.getXPVersion()
 
 function load_settings()
 	settingsfilepath = moduleDirectory.."/settings and presets/settings.txt"
@@ -62,11 +64,15 @@ function load_params()
 			set(composite_far_dist_bias_ref,get(ro_refs_values,82))
 			if get(need_reload,3)==0 then
 				set(need_reload,1,3)
+				print("startreload")
 				sasl.reloadScenery()
 				
 			end
 		end
-		set(need_reload,1,3)
+		if get(need_reload,3)==0 then
+			set(need_reload,1,3)
+		end
+	
 	end
 	 
 end
@@ -74,26 +80,27 @@ end
 load_settings()
 
 function onSceneryLoaded()
-draw_deer_birds_ref=globalPropertyi("sim/private/controls/reno/draw_deer_birds")
-draw_fire_ball_ref=globalPropertyi("sim/private/controls/reno/draw_fire_ball")
-draw_boats_ref=globalPropertyi("sim/private/controls/reno/draw_boats")
-draw_aurora_ref=globalPropertyi("sim/private/controls/reno/draw_aurora") ---------ENVIRO
-draw_scattering_ref=globalPropertyi("sim/private/controls/reno/draw_scattering")
-draw_volume_fog01_ref=globalPropertyi("sim/private/controls/reno/draw_volume_fog01")
-draw_per_pix_liting_ref=globalPropertyi("sim/private/controls/reno/draw_per_pix_liting")
-draw_objs_06_ref=globalPropertyi("sim/private/controls/reno/draw_objs_06")--
-draw_vecs_03_ref=globalPropertyi("sim/private/controls/reno/draw_vecs_03")--
-draw_for_05_ref=globalPropertyi("sim/private/controls/reno/draw_for_05")--
-inn_ring_density_ref=globalPropertyf("sim/private/controls/forest/inn_ring_density")--
-mid_ring_density_ref=globalPropertyf("sim/private/controls/forest/mid_ring_density")--
-out_ring_density_ref=globalPropertyf("sim/private/controls/forest/out_ring_density")--
-draw_detail_apt_03_ref=globalPropertyi("sim/private/controls/reno/draw_detail_apt_03")
-extended_dsfs_ref=globalPropertyf("sim/private/controls/geoid/extended_dsfs")
-comp_texes_ref=globalPropertyi("sim/private/controls/reno/comp_texes")				--to apply
-tile_lod_bias_ref=globalPropertyf("sim/private/controls/ag/tile_lod_bias")
-composite_far_dist_bias_ref=globalPropertyf("sim/private/controls/terrain/composite_far_dist_bias") 
-load_params()
-
+	draw_deer_birds_ref=globalPropertyi("sim/private/controls/reno/draw_deer_birds")
+	draw_fire_ball_ref=globalPropertyi("sim/private/controls/reno/draw_fire_ball")
+	draw_boats_ref=globalPropertyi("sim/private/controls/reno/draw_boats")
+	draw_aurora_ref=globalPropertyi("sim/private/controls/reno/draw_aurora") ---------ENVIRO
+	draw_scattering_ref=globalPropertyi("sim/private/controls/reno/draw_scattering")
+	draw_volume_fog01_ref=globalPropertyi("sim/private/controls/reno/draw_volume_fog01")
+	draw_per_pix_liting_ref=globalPropertyi("sim/private/controls/reno/draw_per_pix_liting")
+	draw_objs_06_ref=globalPropertyi("sim/private/controls/reno/draw_objs_06")--
+	draw_vecs_03_ref=globalPropertyi("sim/private/controls/reno/draw_vecs_03")--
+	draw_for_05_ref=globalPropertyi("sim/private/controls/reno/draw_for_05")--
+	inn_ring_density_ref=globalPropertyf("sim/private/controls/forest/inn_ring_density")--
+	mid_ring_density_ref=globalPropertyf("sim/private/controls/forest/mid_ring_density")--
+	out_ring_density_ref=globalPropertyf("sim/private/controls/forest/out_ring_density")--
+	draw_detail_apt_03_ref=globalPropertyi("sim/private/controls/reno/draw_detail_apt_03")
+	extended_dsfs_ref=globalPropertyf("sim/private/controls/geoid/extended_dsfs")
+	comp_texes_ref=globalPropertyi("sim/private/controls/reno/comp_texes")				--to apply
+	tile_lod_bias_ref=globalPropertyf("sim/private/controls/ag/tile_lod_bias")
+	composite_far_dist_bias_ref=globalPropertyf("sim/private/controls/terrain/composite_far_dist_bias") 
+	if get(need_reload,3)==0 then
+		load_params()
+	end	
 end
 
 mainpanel = subpanel {

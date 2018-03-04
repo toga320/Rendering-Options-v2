@@ -3,9 +3,11 @@ screen_width=globalPropertyi("sim/graphics/view/window_width",false)
 ro_sett=globalPropertyfa ( "pnv/ro/ro_sett", false )
 MainFont = sasl.gl.loadFont ( "fonts/DejaVuSans.ttf" )
 defineProperty("slider_img",  sasl.gl.loadImage("pic/slider.png"))
+defineProperty("back_img",  sasl.gl.loadImage("pic/back.png"))
 defineProperty("blue_img",  sasl.gl.loadImage("pic/blue.png"))
 a=0
 b=0
+local start_pic=1
 current_height=get(screen_height)
 current_width=get(screen_width)
 openmainwindow = sasl.findCommand("pnv/ro/popup")
@@ -19,6 +21,9 @@ sasl.startTimer(StartTimerIDMain)
 local xautolod=0
 
 function draw()
+	if get(ro_sett,20)>0 then	
+		sasl.gl.drawTexture(get(back_img) , -get(screen_width)+10+a	 , -get(screen_height)*(get(ro_sett,11)/100) , get(screen_width) , get(screen_height), {1 , 1 , 1 , 1 })
+	end
 	if StartTimerIDMain~=0 then
 		if timercount>1 then
 			mnm=mnm.."."
@@ -59,6 +64,13 @@ function onMouseDown(component, x, y, button, parentX, parentY)
 	return true
 end
 function update()
+	if get(ro_sett,20)>0 then
+		set(ro_sett,get(ro_sett,20)-0.05,20)
+	end
+	if get(ro_sett,20)<=0 and get(ro_sett,19)==2 then
+		sasl.commandOnce(openmainwindow)
+		set(ro_sett,0,19)
+	end
 	if (current_height~=get(screen_height)) or (current_width~=get(screen_width)) then
 		slidetab.position = {get(screen_width)-10-a, get(screen_height)*(get(ro_sett,11)/100), 110, 35}
 		current_height=get(screen_height)
@@ -89,6 +101,7 @@ function update()
 		sasl.stopTimer(StartTimerIDMain)
 		sasl.deleteTimer(StartTimerIDMain)
 		StartTimerIDMain=0
+		set(ro_sett,0,20)
 		timevar=0
 	end
 end

@@ -14,6 +14,7 @@ MainFont2 = sasl.gl.loadFont ( "fonts/DejaVuSans-Bold.ttf" )
 
 selected_tab = globalPropertyi("pnv/ro/selected_tab",false)
 ro_refs_values=globalPropertyfa ( "pnv/ro/ro_refs_values", false )
+
 openmainwindow = sasl.findCommand("pnv/ro/popup")
 sizetext=20
 sizetext2=16
@@ -140,6 +141,7 @@ dist_far_ref=globalPropertyf("sim/private/controls/lights/dist_far")
 dist_near_ref=globalPropertyf("sim/private/controls/lights/dist_near")
 scale_far_ref=globalPropertyf("sim/private/controls/lights/scale_far") ---------ENVIRO
 scale_near_ref=globalPropertyf("sim/private/controls/lights/scale_near") ---------ENVIRO
+kill_3d=globalPropertyf("sim/private/controls/clouds/kill_3d", false )
 end
 function startlang()
 	langfilepath = moduleDirectory.."/lang/eng.txt"
@@ -404,6 +406,17 @@ function draw()
 			sasl.gl.drawText ( MainFont , 450 , 275 , round(get(ambient_gain_ref),2), 16 , false , false , TEXT_ALIGN_LEFT , {1 , 1 , 1 , get(ro_sett,9) } )
 			sasl.gl.drawText ( MainFont , 270 , 255 , langfile_sett[67]..":  ", 16 , false , false , TEXT_ALIGN_LEFT , {1 , 1 , 1 , get(ro_sett,9) } )
 			sasl.gl.drawText ( MainFont , 450 , 255 , round(get(diffuse_gain_ref),2), 16 , false , false , TEXT_ALIGN_LEFT , {1 , 1 , 1 , get(ro_sett,9) } )
+			if get(ro_sett,1)==0 then
+				sasl.gl.drawText ( MainFont , 310 , 235 , langfile_sett[130], 16 , false , false , TEXT_ALIGN_LEFT , {1 , 1 , 1 , get(ro_sett,9) } )
+				if get(ro_sett,14)==0 then
+					sasl.gl.drawTexture(get(off_pic) , 270 , 233 , 30 , 15, {1 , 1 , 1 , get(ro_sett,9)})
+				else
+					sasl.gl.drawTexture(get(on_pic) , 270 , 233 , 30 , 15, {1 , 1 , 1 , get(ro_sett,9) })
+				end
+			else
+				sasl.gl.drawText ( MainFont , 310 , 235 , langfile_sett[130], 16 , false , false , TEXT_ALIGN_LEFT , {0.5 , 0.5 , 0.5 , get(ro_sett,9) } )
+				sasl.gl.drawTexture(get(mid_pic) , 270 , 233 , 30 , 15, {1 , 1 , 1 , get(ro_sett,9) })
+			end
 			if page_cloud==1 then
 				sasl.gl.drawTriangle ( 760 , 70 , 760 , 50 , 780 , 60 , {0.12,0.45,0.75,get(ro_sett,9)} )
 				sasl.gl.drawWidePolyLine  ( {760 , 70 , 760 , 50 , 780 , 60, 760 , 70}, 2,{1,1,1,get(ro_sett,9)} )
@@ -722,8 +735,8 @@ function savepreset(pr_num)
 	val_to_save[25]="CSM Split interior="..get(csm_split_interior)
 	val_to_save[26]="Far limit="..get(far_limit)
 	val_to_save[27]="Scenery shadows="..get(scenery_shadows)
-	val_to_save[28]="Cockpit near adjust="..get(cockpit_near_adjust)
-	val_to_save[29]="Cockpit near proxy="..get(cockpit_near_proxy)
+	val_to_save[28]="Cockpit near adjust="..round(get(cockpit_near_adjust),1)
+	val_to_save[29]="Cockpit near proxy="..round(get(cockpit_near_proxy),1)
 	val_to_save[30]="Shadow cam size="..get(shadow_cam_size)
 	val_to_save[31]="Shadow size="..get(shadow_size)
 	val_to_save[32]="Disable shadows="..get(disable_shadow_prep)
@@ -908,6 +921,7 @@ function update()
 		elseif visib_blue[i]<0 then visib_blue[i]=0
 		end
 	end
+	
 	if StartTimerID ~= 0 then
 		timevar = sasl.getElapsedSeconds(StartTimerID)
 		timercount=timercount+0.1
@@ -1759,6 +1773,7 @@ function onMouseDown ( component , x , y , button , parentX , parentY )
 		elseif x>145 and x<245 and y>60 and y<95 then
 			sasl.commandOnce(openmainwindow)
 		elseif x>22 and x<130 and y>60 and y<95 then
+			sasl.commandOnce(openmainwindow)
 			if get(need_reload,1)==1 then
 				set(need_reload,1,2)
 			end
@@ -1811,6 +1826,17 @@ function onMouseDown ( component , x , y , button , parentX , parentY )
 				if get(ssao_enable_ref)==0 then set(ssao_enable_ref,1) else set(ssao_enable_ref,0) end
 			end
 		elseif get(selected_tab)==6 then
+			if x>270 and x<310 and y>233 and y<250 then
+				if get(ro_sett,1)==0 then
+					if get(ro_sett,14)==0 then
+						set(ro_sett,1,14)
+						set(kill_3d,1)
+					else
+						set(ro_sett,0,14)
+						set(kill_3d,0)
+					end
+				end
+			end
 			if page_cloud==1 then
 				if x>760 and x<780 and y>50 and y<70 then
 					page_cloud=2
