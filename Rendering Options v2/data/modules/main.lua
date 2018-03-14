@@ -12,6 +12,8 @@ ro_sett=createGlobalPropertyfa ( "pnv/ro/ro_sett", {0,1,0,0,1,30,40,500,1,0,50,1
 																							--14 disable clouds
 																							---19 stage onload;20 load logic for showing pic
 ro_refs_values=createGlobalPropertyfa ( "pnv/ro/ro_refs_values", 150 , false , false )
+ro_boat_loc_x=createGlobalPropertyfa ( "pnv/ro/ro_boat_loc_x", 2 , false , false )
+ro_boat_loc_z=createGlobalPropertyfa ( "pnv/ro/ro_boat_loc_z", 2 , false , false )
 need_reload=createGlobalPropertyia ( "pnv/ro/need_reload", {0,0,0} , false , false )  ---- 1-button on-off; 2-reload_func; 3-trigger to reload once at start
 reload_scenery = sasl.findCommand("sim/operation/reload_scenery")
 reload_aircraft = sasl.findCommand("sim/operation/reload_aircraft")

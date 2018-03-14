@@ -14,7 +14,8 @@ MainFont2 = sasl.gl.loadFont ( "fonts/DejaVuSans-Bold.ttf" )
 
 selected_tab = globalPropertyi("pnv/ro/selected_tab",false)
 ro_refs_values=globalPropertyfa ( "pnv/ro/ro_refs_values", false )
-
+ro_boat_loc_x=globalPropertyfa ( "pnv/ro/ro_boat_loc_x", false )
+ro_boat_loc_z=globalPropertyfa ( "pnv/ro/ro_boat_loc_z", false )
 openmainwindow = sasl.findCommand("pnv/ro/popup")
 sizetext=20
 sizetext2=16
@@ -30,6 +31,7 @@ local line
 local scrollwheel=1
 local val_to_save={}
 local visib_blue={0,0,0,0,0,0,0,0,0,0,0,0}
+
 need_reload=globalPropertyia ( "pnv/ro/need_reload", false )
 function round(num, numDecimalPlaces)
   local mult = 10^(numDecimalPlaces or 0)
@@ -142,6 +144,12 @@ dist_near_ref=globalPropertyf("sim/private/controls/lights/dist_near")
 scale_far_ref=globalPropertyf("sim/private/controls/lights/scale_far") ---------ENVIRO
 scale_near_ref=globalPropertyf("sim/private/controls/lights/scale_near") ---------ENVIRO
 kill_3d=globalPropertyf("sim/private/controls/clouds/kill_3d", false )
+
+---boats and ships
+boat_override=globalPropertyfa ( "sim/operation/override/override_boats", false )
+ship_x=globalPropertyfa ( "sim/world/boat/x_mtr", false )
+ship_z=globalPropertyfa ( "sim/world/boat/z_mtr", false )
+
 end
 function startlang()
 	langfilepath = moduleDirectory.."/lang/eng.txt"
@@ -823,6 +831,13 @@ function load_preset(pr_num)
 		set(draw_deer_birds_ref,get(ro_refs_values,1))
 		set(draw_fire_ball_ref,get(ro_refs_values,2))
 		set(draw_boats_ref,get(ro_refs_values,3))
+		if get(ro_refs_values,3)==0 then
+			for i=1,2,1 do
+				set(boat_override,1,i)
+				set(ship_x,-2000+100*i,i)
+				set(ship_z,-35300,i)
+			end
+		end
 		set(draw_aurora_ref,get(ro_refs_values,4))
 		set(draw_scattering_ref,get(ro_refs_values,5))
 		set(draw_volume_fog01_ref,get(ro_refs_values,6))
@@ -1785,7 +1800,23 @@ function onMouseDown ( component , x , y , button , parentX , parentY )
 			elseif x>270 and x<310 and y>368 and y<398 then
 				if get(draw_fire_ball_ref)==0 then set(draw_fire_ball_ref,1) else set(draw_fire_ball_ref,0) end
 			elseif x>270 and x<310 and y>338 and y<368 then
-				if get(draw_boats_ref)==0 then set(draw_boats_ref,1) else set(draw_boats_ref,0) end
+				if get(draw_boats_ref)==0 then
+					set(draw_boats_ref,1)
+					for i=1,2,1 do
+						set(boat_override,0,i)
+						set(ship_x,get(ro_boat_loc_x,i),i)
+						set(ship_z,get(ro_boat_loc_z,i),i)
+					end
+				else
+					set(draw_boats_ref,0)
+					for i=1,2,1 do
+						set(ro_boat_loc_x,get(ship_x,i),i)
+						set(ro_boat_loc_z,get(ship_z,i),i)
+						set(boat_override,1,i)
+						set(ship_x,-2000+100*i,i)
+						set(ship_z,-35300,i)
+					end
+				end
 			elseif x>270 and x<310 and y>308 and y<338 then
 				if get(ro_sett,1)==0 then
 					if get(draw_aurora_ref)==0 then set(draw_aurora_ref,1) else set(draw_aurora_ref,0) end

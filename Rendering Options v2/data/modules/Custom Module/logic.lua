@@ -157,6 +157,11 @@ function readrefslogic()
 	dist_near_ref=globalPropertyf("sim/private/controls/lights/dist_near")
 	scale_far_ref=globalPropertyf("sim/private/controls/lights/scale_far") ---------ENVIRO
 	scale_near_ref=globalPropertyf("sim/private/controls/lights/scale_near")
+	boat_override=globalPropertyfa ( "sim/operation/override/override_boats", false )
+	ship_x=globalPropertyfa ( "sim/world/boat/x_mtr", false )
+	ship_z=globalPropertyfa ( "sim/world/boat/z_mtr", false )
+	ro_boat_loc_x=globalPropertyfa ( "pnv/ro/ro_boat_loc_x", false )
+	ro_boat_loc_z=globalPropertyfa ( "pnv/ro/ro_boat_loc_z", false )
 end
 
 local LOD_fps_average = 0
@@ -233,6 +238,35 @@ function loading_preset_at_start(pr_num)
 		end
 		settingsfile:close()
 		ii=1
+		for i=1,2,1 do
+			set(ro_boat_loc_x,get(ship_x,i),i)
+			set(ro_boat_loc_z,get(ship_z,i),i)
+		end
+		if get(ro_refs_values,3)==0 then
+			for i=1,2,1 do
+				set(boat_override,1,i)
+				set(ship_x,-2000+100*i,i)
+				set(ship_z,-35300,i)
+			end
+		end
+		set(draw_deer_birds_ref,get(ro_refs_values,1))
+			set(draw_fire_ball_ref,get(ro_refs_values,2))
+			set(draw_boats_ref,get(ro_refs_values,3))
+			set(draw_aurora_ref,get(ro_refs_values,4))
+			set(draw_scattering_ref,get(ro_refs_values,5))
+			set(draw_volume_fog01_ref,get(ro_refs_values,6))
+			set(draw_per_pix_liting_ref,get(ro_refs_values,7))
+			set(draw_objs_06_ref,get(ro_refs_values,34))
+			set(draw_vecs_03_ref,get(ro_refs_values,36))
+			set(draw_for_05_ref,get(ro_refs_values,37))
+			set(inn_ring_density_ref,get(ro_refs_values,38))
+			set(mid_ring_density_ref,get(ro_refs_values,39))
+			set(out_ring_density_ref,get(ro_refs_values,40))
+			set(draw_detail_apt_03_ref,get(ro_refs_values,41))
+			set(extended_dsfs_ref,get(ro_refs_values,42))
+			set(comp_texes_ref,get(ro_refs_values,44))
+			set(tile_lod_bias_ref,get(ro_refs_values,80))
+			set(composite_far_dist_bias_ref,get(ro_refs_values,82))
 		set(static_plane_build_vis,get(ro_refs_values,8))
 		set(static_plane_density,get(ro_refs_values,9))
 		set(use_reflective_water,get(ro_refs_values,10))
